@@ -1,7 +1,7 @@
 #ifndef GRAPH_DIRECTED_GRAPH_H_H
 #define GRAPH_DIRECTED_GRAPH_H_H
 
-#include "./graph_base.h"
+#include "graph_base.hpp"
 
 namespace lzhlib
 {

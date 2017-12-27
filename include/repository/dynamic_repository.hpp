@@ -5,7 +5,7 @@
 #include <vector>     //for std::vector
 #include <functional>
 #include <optional>
-#include "./stock_id.h"
+#include "stock_id.hpp"
 
 namespace lzhlib
 {

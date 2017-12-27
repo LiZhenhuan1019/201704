@@ -1,7 +1,7 @@
 #ifndef GRAPH_UNDIRECTED_GRAPH_H
 #define GRAPH_UNDIRECTED_GRAPH_H
 
-#include "./graph_base.h"
+#include "graph_base.hpp"
 
 namespace lzhlib
 {

@@ -1,8 +1,8 @@
 #ifndef GRAPH_H_INCLUDED
 #define GRAPH_H_INCLUDED
 
-#include "./undirected_graph.h"
-#include "./directed_graph.h"
+#include "undirected_graph.hpp"
+#include "directed_graph.hpp"
 /** \file
  *  \brief 本文件提供与 [图](https://en.wikipedia.org/wiki/Graph_(abstract_data_type)) 有关的抽象.
  *

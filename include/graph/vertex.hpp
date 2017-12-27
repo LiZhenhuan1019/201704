@@ -4,8 +4,8 @@
 #include <functional>    //for std::less
 #include <set>           //for std::set
 #include <stdexcept>     //for std::logic_error
-#include "./edge_id.h"
-#include "./vertex_id.h"
+#include "edge_id.hpp"
+#include "vertex_id.hpp"
 
 namespace lzhlib
 {

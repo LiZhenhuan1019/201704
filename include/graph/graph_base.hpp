@@ -1,8 +1,8 @@
 #ifndef GRAPH_GRAPH_BASE_H
 #define GRAPH_GRAPH_BASE_H
 
-#include "./vertex.h"
-#include "./edge.h"
+#include "vertex.hpp"
+#include "edge.hpp"
 #include "repository/repository.h"
 
 namespace lzhlib

@@ -2,7 +2,7 @@
 #define GRAPH_EDGE_H
 
 #include <utility>    //for std::pair
-#include "./vertex_id.h"
+#include "vertex_id.hpp"
 
 namespace lzhlib
 {
