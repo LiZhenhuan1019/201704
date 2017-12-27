@@ -1,4 +1,3 @@
-
 #ifndef GRAPH_DIRECTED_GRAPH_H_H
 #define GRAPH_DIRECTED_GRAPH_H_H
 

@@ -16,4 +16,4 @@ add_executable(201704
         include/repository/dynamic_repository.h
         include/repository/repository.h
         include/repository/stock_id.h
-        )
+        include/parse/parse_vertex_list.h)

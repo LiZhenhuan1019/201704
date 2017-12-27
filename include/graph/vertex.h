@@ -1,4 +1,3 @@
-
 #ifndef GRAPH_VERTEX_H
 #define GRAPH_VERTEX_H
 

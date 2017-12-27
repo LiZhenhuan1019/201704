@@ -1,4 +1,3 @@
-
 #ifndef GRAPH_EDGE_H
 #define GRAPH_EDGE_H
 
