@@ -8,16 +8,21 @@ namespace lzhlib
     namespace detail
     {
         struct initializer_holder
-        {};
+        {
+        };
+
         struct invalid_id_t
         {
-            constexpr invalid_id_t(initializer_holder){}
+            constexpr invalid_id_t(initializer_holder)
+            {}
         };
     }
     constexpr detail::invalid_id_t invalid_id{detail::initializer_holder{}};
+
     class stock_id
     {
     public:
+        stock_id() = default;
         constexpr stock_id(std::size_t i)   //not private and make repositories as friend class,because there are too many type of repositories.
             : id_(i)
         {}
@@ -42,12 +47,12 @@ namespace lzhlib
         {
             return id_;
         }
-        stock_id& operator++()
+        stock_id &operator++()
         {
             ++id_;
             return *this;
         }
-        stock_id& operator--()
+        stock_id &operator--()
         {
             --id_;
             return *this;

@@ -3,6 +3,7 @@
 
 #include <optional>
 #include "basic_parse.hpp"
+#include "../basic_serialize.hpp"
 
 namespace ds_expr
 {
@@ -15,7 +16,8 @@ namespace ds_expr
                 template <typename T>
                 void assign_value(T &value, std::string const &input)
                 {
-                    std::istringstream(input) >> value;
+                    std::istringstream stream(input);
+                    stream >> value;
                 }
                 void assign_value(std::string &value, std::string const &input)
                 {

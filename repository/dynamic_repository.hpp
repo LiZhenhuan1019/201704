@@ -6,6 +6,7 @@
 #include <functional>
 #include <optional>
 #include "stock_id.hpp"
+#include "../serialize/basic_serialize.hpp"
 
 namespace lzhlib
 {
@@ -273,14 +274,14 @@ namespace lzhlib
         template <class ...Args>
         id_t allocate_stock(Args &&... args)
         {
-            stocks.push_back(std::make_optional<stock_t>(std::forward<Args>(args)...));
+            stocks.push_back(std::make_optional<stock_t>(std::in_place, std::forward<Args>(args)...));
             id_t ret{stocks.size() - 1};    //the allocated stock is at the last position in the container.
             return ret;
         }
         template <class ...Args>
         id_t reuse_stock(id_t reused, Args &&... args)//precondition:stocks[reused.id()]必须为一个空指针
         {
-            reusable_pointer(reused) = std::make_optional<stock_t>(std::forward<Args>(args)...);
+            reusable_pointer(reused) = std::make_optional<stock_t>(std::in_place, std::forward<Args>(args)...);
             return reused;
         }
         id_t reusable_stock() const               //postcondition: 设返回值为ret,则stocks[ret.id()]为一个空指针.
@@ -312,6 +313,19 @@ namespace lzhlib
         }
     private:
         std::vector<opt_t> stocks;
+
+        friend std::istream &operator>>(std::istream &in, dynamic_repository &repository)
+        {
+            using namespace ds_expr::serialize;
+            in >> repository.stocks;
+            return in;
+        }
+        friend std::ostream &operator<<(std::ostream &out, dynamic_repository const &repository)
+        {
+            using namespace ds_expr::serialize;
+            out << repository.stocks;
+            return out;
+        }
     };
 
 }

@@ -39,6 +39,29 @@ namespace lzhlib
 
         private:
             pair_t vertices;   //对于 undirected graph,vertices.first 与vertices.second 的地位相同.对于directed graph,vertices.first为边的起点,vertices.second为边的终点.
+
+            template <typename ValueT>
+            friend std::istream &operator>>(std::istream &in, edge<ValueT> &edge)
+            {
+                using namespace ds_expr::serialize;
+                if constexpr (!std::is_same_v<ValueT, lzhlib::null_value_tag>)
+                {
+                    in >> edge.edge_value();
+                }
+                in >> edge.vertices.first >> edge.vertices.second;
+                return in;
+            }
+            template <typename ValueT>
+            friend std::ostream &operator<<(std::ostream &out, edge<ValueT> const &edge)
+            {
+                using namespace ds_expr::serialize;
+                if constexpr (!std::is_same_v<ValueT, lzhlib::null_value_tag>)
+                {
+                    out << edge.edge_value() << " ";
+                }
+                out << edge.vertices.first << edge.vertices.second;
+                return out;
+            }
         };
 
         template <class EdgeValueT>
@@ -47,8 +70,9 @@ namespace lzhlib
         public:
             using edge_value_t = EdgeValueT;
 
+            edge() = default;
             template <class ...Args>
-            explicit edge(Args &&...args)
+            edge(std::in_place_t, Args &&...args)
                 : value(std::forward<Args>(args)...)
             {
             }

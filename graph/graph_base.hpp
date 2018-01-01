@@ -3,7 +3,7 @@
 
 #include "vertex.hpp"
 #include "edge.hpp"
-#include "repository/repository.h"
+#include "../repository/dynamic_repository.hpp"
 
 namespace lzhlib
 {
@@ -116,6 +116,18 @@ namespace lzhlib
         }
         dynamic_repository<vertex_t> vertex_repository;
         dynamic_repository<edge_t> edge_repository;
+        friend std::istream &operator>>(std::istream &in, graph_base &graph)
+        {
+            in >> graph.vertex_repository;
+            in >> graph.edge_repository;
+            return in;
+        }
+        friend std::ostream &operator<<(std::ostream &out, graph_base const &graph)
+        {
+            out << graph.vertex_repository;
+            out << graph.edge_repository;
+            return out;
+        }
     };
 }
 #endif //GRAPH_GRAPH_BASE_H

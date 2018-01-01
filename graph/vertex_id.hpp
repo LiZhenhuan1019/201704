@@ -35,6 +35,19 @@ namespace lzhlib
             return id_;
         }
         stock_id id_{lzhlib::invalid_id};
+
+        friend std::istream &operator>>(std::istream &in, vertex_id &id)
+        {
+            std::size_t i;
+            in >> i;
+            id.id_ = stock_id(i);
+            return in;
+        }
+        friend std::ostream &operator<<(std::ostream &out, vertex_id id)
+        {
+            out << id.id().id() << " ";
+            return out;
+        }
     };
 
     struct invalid_vertex

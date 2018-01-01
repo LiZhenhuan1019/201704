@@ -1,6 +1,8 @@
 #ifndef INC_201704_TEST_GRAPH_HPP
 #define INC_201704_TEST_GRAPH_HPP
 
+#include <cassert>
+#include <iostream>
 #include "../graph/graph.hpp"
 namespace test
 {
@@ -60,6 +62,23 @@ namespace test
                     assert(vertices0 == vertices1);
                 }
 
+                {
+                    std::ostringstream ostream1;
+                    ostream1 << g;
+                    auto string1 = ostream1.str();
+                    std::cout << string1 << std::endl;
+
+                    directed_graph<std::string, std::string> g2;
+                    std::istringstream istream(string1);
+                    istream >> g2;
+
+                    std::ostringstream ostream2;
+                    ostream2 << g2;
+                    auto string2 = ostream2.str();
+                    std::cout << string2 << std::endl;
+
+                    assert(string1 == string2);
+                }
                 g.remove_edge(e0);
                 assert(!g.associated(v0, e0));
                 assert(!g.associated(v1, e0));
@@ -82,6 +101,7 @@ namespace test
             }
             g.remove_vertex(v0);
             g.remove_vertex(v1);
+
         }
     }
 }

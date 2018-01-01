@@ -6,6 +6,7 @@
 #include <stdexcept>     //for std::logic_error
 #include "edge_id.hpp"
 #include "vertex_id.hpp"
+#include "../serialize/serialize.hpp"
 
 namespace lzhlib
 {
@@ -28,6 +29,7 @@ namespace lzhlib
         class edge_ref
         {
         public:
+            edge_ref() = default;
             edge_ref(edge_id e, vertex_id opposite)
                 : edge_(e), vertex_(opposite)
             {}
@@ -60,6 +62,17 @@ namespace lzhlib
         private:
             edge_id edge_;
             vertex_id vertex_;
+
+            friend std::istream &operator>>(std::istream &in, edge_ref &r)
+            {
+                in >> r.edge_ >> r.vertex_;
+                return in;
+            }
+            friend std::ostream &operator<<(std::ostream &out, edge_ref r)
+            {
+                out << r.edge_ << r.vertex_;
+                return out;
+            }
         };
 
         inline bool operator<(edge_ref r, edge_id rhs)
@@ -136,6 +149,32 @@ namespace lzhlib
 
         private:
             std::set<edge_ref, std::less<void>> edges;  //for std::less<void>::is_transparent  --> for comparision between differnet types
+            template <typename ValueT>
+            friend std::istream &operator>>(std::istream &in, vertex<ValueT> &vertex)
+            {
+                using namespace ds_expr::serialize;
+                if constexpr (!std::is_same_v<ValueT, lzhlib::null_value_tag>)
+                {
+                    in >> vertex.vertex_value();
+                }
+                std::vector<edge_ref> edge_refs;
+                in >> edge_refs;
+                vertex.edges.clear();
+                std::copy(edge_refs.begin(), edge_refs.end(), std::inserter(vertex.edges, vertex.edges.end()));
+                return in;
+            }
+            template <typename ValueT>
+            friend std::ostream &operator<<(std::ostream &out, vertex <ValueT> const &vertex)
+            {
+                using namespace ds_expr::serialize;
+                if constexpr (!std::is_same_v<ValueT, lzhlib::null_value_tag>)
+                {
+                    out << vertex.vertex_value() << " ";
+                }
+                auto const &edge_refs = vertex.associated_edges();
+                out << edge_refs;
+                return out;
+            }
         };
 
         template <class VertexValueT>
@@ -144,8 +183,9 @@ namespace lzhlib
         public:
             using vertex_value_t = VertexValueT;
 
+            vertex() = default;
             template <class ...Args>
-            explicit vertex(Args &&... args)
+            vertex(std::in_place_t, Args &&... args)
                 : value(std::forward<Args>(args)...)
             {
 

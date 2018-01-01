@@ -16,4 +16,4 @@ add_executable(201704
         repository/dynamic_repository.hpp
         repository/repository.hpp
         repository/stock_id.hpp
-        serialize/parse/parse_list.hpp serialize/basic_serialize.hpp serialize/parse/basic_parse.hpp test/test.hpp test/test_serialize.hpp serialize/serialize_exception.hpp test/test_graph.hpp)
+        serialize/parse/parse_list.hpp serialize/basic_serialize.hpp serialize/parse/basic_parse.hpp test/test.hpp test/test_serialize.hpp serialize/serialize_exception.hpp test/test_graph.hpp serialize/serialize.hpp)
