@@ -49,9 +49,33 @@ namespace lzhlib
             }
         };
 
-        class const_iterator
+        struct base_iter
+        {
+            using difference_type = std::ptrdiff_t;
+            using value_type = stock_t;
+            using pointer = value_type *;
+            using reference = value_type &;
+            using iterator_category = std::bidirectional_iterator_tag;
+
+            template <typename iter1, typename iter2>
+            friend bool operator==(iter1 const &lhs, iter2 const &rhs)
+            {
+                return lhs.node == rhs.node;
+            }
+            template <typename iter1, typename iter2>
+            friend bool operator!=(iter1 const &lhs, iter2 const &rhs)
+            {
+                return !(lhs == rhs);
+            }
+        };
+
+        class iterator;
+
+        class const_iterator : base_iter
         {
             friend class dynamic_repository;
+
+            friend iterator;
 
             const_iterator(dynamic_repository const &repo, id_t id)
                 : repo(repo), id(id)
@@ -87,28 +111,25 @@ namespace lzhlib
                 --*this;
                 return ret;
             }
-            bool operator==(const_iterator rhs) const
-            {
-                return id == rhs.id;
-            }
-            bool operator!=(const_iterator rhs) const
-            {
-                return !(*this == rhs);
-            }
+
 
         protected:
             std::reference_wrapper<const dynamic_repository> repo;
             id_t id;
         };
 
-        class iterator : public const_iterator
+        class iterator : base_iter
         {
             friend class dynamic_repository;
 
             iterator(dynamic_repository &repo, id_t id)
-                : const_iterator(repo, id), repo(repo)
+                : repo(repo), id(id)
             {}
         public:
+            operator const_iterator()
+            {
+                return const_iterator(repo, id);
+            }
             stock_t &operator*()
             {
                 return repo.get().get_stock(id);
@@ -139,17 +160,9 @@ namespace lzhlib
                 --*this;
                 return ret;
             }
-            bool operator==(iterator rhs) const
-            {
-                return id == rhs.id;
-            }
-            bool operator!=(iterator rhs) const
-            {
-                return !(*this == rhs);
-            }
         private:
             std::reference_wrapper<dynamic_repository> repo;
-            using const_iterator::id;
+            id_t id;
         };
 
 

@@ -98,7 +98,7 @@ namespace lzhlib
             return edge_repository.get_stock(e.id());
         }
 
-        vertex_id to_vertex_id(stock_id i)    //preserved.Direved class don't need this just for now.
+        vertex_id to_vertex_id(stock_id i)    //preserved.Derived class don't need this just for now.
         {
             return vertex_id(i);
         }
