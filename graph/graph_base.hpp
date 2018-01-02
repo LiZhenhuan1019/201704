@@ -69,9 +69,9 @@ namespace lzhlib
             return vertex_id{vertex_repository.first_stock()};
         }
 
-        bool vertex_end(vertex_id id) const
+        vertex_id end_vertex() const
         {
-            return vertex_repository.stock_end(id.id());
+            return vertex_id{vertex_repository.end_stock()};
         }
 
         vertex_id next_vertex(vertex_id id) const

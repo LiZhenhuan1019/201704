@@ -18,36 +18,31 @@ namespace lzhlib
         using id_t = stock_id;
         using opt_t = std::optional<stock_t>;
 
-        class attempt_to_use_unassigned_stock : public std::out_of_range
+        class attempt_to_use_unassigned_stock : public std::logic_error
         {
         public:
             attempt_to_use_unassigned_stock(id_t id)
-                : out_of_range(std::string("Attempt to use unassigned stock which id is ") +
-                               std::to_string(id.id()) + "!")
-            {
-
-            }
+                : logic_error(std::string("Attempt to use unassigned stock which id_ is ") +
+                              std::to_string(id.id()) + "!")
+            {}
         };
 
-        class attempt_to_remove_nonexistent_stock : public std::out_of_range
+        class attempt_to_remove_nonexistent_stock : public std::logic_error
         {
         public:
             attempt_to_remove_nonexistent_stock(id_t id)
-                : out_of_range(std::string("Attempt to use unremovable stock which id is ") +
-                               std::to_string(id.id()) + "!")
-            {
-
-            }
+                : logic_error(std::string("Attempt to use unremovable stock which id_ is ") +
+                              std::to_string(id.id()) + "!")
+            {}
         };
 
-        class attempt_to_reuse_unreusable_stock : public std::out_of_range
+        class attempt_to_reuse_unreusable_stock : public std::logic_error
         {
         public:
             attempt_to_reuse_unreusable_stock(id_t id)
-                : out_of_range(std::string("Attempt to reuse unreusable stock which id is ") +
-                               std::to_string(id.id()) + "!")
-            {
-            }
+                : logic_error(std::string("Attempt to reuse unreusable stock which id_ is ") +
+                              std::to_string(id.id()) + "!")
+            {}
         };
 
         struct base_iter
@@ -79,20 +74,20 @@ namespace lzhlib
             friend iterator;
 
             const_iterator(dynamic_repository const &repo, id_t id)
-                : repo(repo), id(id)
+                : repo(repo), id_(id)
             {}
         public:
             stock_t const &operator*()
             {
-                return repo.get().get_stock(id);
+                return repo.get().get_stock(id_);
             }
             stock_t const *operator->()
             {
-                return &repo.get().get_stock(id);
+                return &repo.get().get_stock(id_);
             }
             const_iterator &operator++()
             {
-                id = repo.get().next_stock(id);
+                id_ = repo.get().next_stock(id_);
                 return *this;
             }
             const_iterator operator++(int)
@@ -103,7 +98,7 @@ namespace lzhlib
             }
             const_iterator &operator--()
             {
-                id = repo.get().prev_stock(id);
+                id_ = repo.get().prev_stock(id_);
                 return *this;
             }
             const_iterator operator--(int)
@@ -113,10 +108,15 @@ namespace lzhlib
                 return ret;
             }
 
+            id_t id() const
+            {
+                return id_;
+            }
+
 
         protected:
             std::reference_wrapper<const dynamic_repository> repo;
-            id_t id;
+            id_t id_;
         };
 
         class iterator : base_iter
@@ -124,24 +124,24 @@ namespace lzhlib
             friend class dynamic_repository;
 
             iterator(dynamic_repository &repo, id_t id)
-                : repo(repo), id(id)
+                : repo(repo), id_(id)
             {}
         public:
             operator const_iterator()
             {
-                return const_iterator(repo, id);
+                return const_iterator(repo, id_);
             }
             stock_t &operator*()
             {
-                return repo.get().get_stock(id);
+                return repo.get().get_stock(id_);
             }
             stock_t *operator->()
             {
-                return &repo.get().get_stock(id);
+                return &repo.get().get_stock(id_);
             }
             iterator &operator++()
             {
-                id = repo.get().next_stock(id);
+                id_ = repo.get().next_stock(id_);
                 return *this;
             }
             iterator operator++(int)
@@ -152,7 +152,7 @@ namespace lzhlib
             }
             iterator &operator--()
             {
-                id = repo.get().prev_stock(id);
+                id_ = repo.get().prev_stock(id_);
                 return *this;
             }
             iterator operator--(int)
@@ -161,13 +161,18 @@ namespace lzhlib
                 --*this;
                 return ret;
             }
+
+            id_t id() const
+            {
+                return id_;
+            }
         private:
             std::reference_wrapper<dynamic_repository> repo;
-            id_t id;
+            id_t id_;
         };
 
 
-        //id interface
+        //id_ interface
         stock_t &get_stock(id_t id)
         {
 #ifndef NDEBUG
@@ -213,14 +218,14 @@ namespace lzhlib
         {
             return stock_at_or_after(id_t{0});
         }
-        bool stock_end(id_t current) const
+        id_t end_stock() const
         {
-            return current.id() == stocks.size();
+            return stocks.size();
         }
-        id_t next_stock(id_t current) const        //precondition: current.id() < stocks.size()
+        id_t next_stock(id_t current) const        //precondition: current.id_() < stocks.size()
         {
-            return stock_at_or_after(++current);   //postcondition: 设返回值为next,则stocks[next.id()]为current代表的位置或current代表的位置之后的位置上的有效stock的左值,
-        }                                          // 或者next.id() == stocks.size()(current代表的位置之后的位置上均无有效stock
+            return stock_at_or_after(++current);   //postcondition: 设返回值为next,则stocks[next.id_()]为current代表的位置或current代表的位置之后的位置上的有效stock的左值,
+        }                                          // 或者next.id_() == stocks.size()(current代表的位置之后的位置上均无有效stock
         id_t prev_stock(id_t current) const
         {
             return stock_at_or_before(--current);
@@ -279,13 +284,13 @@ namespace lzhlib
             return ret;
         }
         template <class ...Args>
-        id_t reuse_stock(id_t reused, Args &&... args)//precondition:stocks[reused.id()]必须为一个空指针
+        id_t reuse_stock(id_t reused, Args &&... args)//precondition:stocks[reused.id_()]必须为一个空指针
         {
             reusable_pointer(reused) = std::make_optional<stock_t>(std::in_place, std::forward<Args>(args)...);
             return reused;
         }
-        id_t reusable_stock() const               //postcondition: 设返回值为ret,则stocks[ret.id()]为一个空指针.
-        {                                         //或者ret.id() == stocks.size()(current代表的位置及current代表的位置之后的位置上均无reusable stock
+        id_t reusable_stock() const               //postcondition: 设返回值为ret,则stocks[ret.id_()]为一个空指针.
+        {                                         //或者ret.id_() == stocks.size()(current代表的位置及current代表的位置之后的位置上均无reusable stock
             id_t current{0};
             while (current.id() != stocks.size() && stocks[current.id()] != std::nullopt)
                 ++current;
@@ -299,17 +304,17 @@ namespace lzhlib
 #endif // NDEBUG
             return stocks[id.id()];
         }
-        id_t stock_at_or_after(id_t current) const //precondition: current.id() <= stocks.size()
+        id_t stock_at_or_after(id_t current) const //precondition: current.id_() <= stocks.size()
         {
             while (current.id() != stocks.size() && stocks[current.id()] == std::nullopt)
                 ++current;
-            return current;                       //postcondition: 设返回值为next,则stocks[next.id()]为指向current代表的位置或current代表的位置之后的位置上的有效stock的指针的左值,
-        }                                         //或者next.id() == stocks.size()(current代表的位置及current代表的位置之后的位置上均无有效stock
-        id_t stock_at_or_before(id_t current) const //precondition: current.id() <= stocks.size()
+            return current;                       //postcondition: 设返回值为next,则stocks[next.id_()]为指向current代表的位置或current代表的位置之后的位置上的有效stock的指针的左值,
+        }                                         //或者next.id_() == stocks.size()(current代表的位置及current代表的位置之后的位置上均无有效stock
+        id_t stock_at_or_before(id_t current) const //precondition: current.id_() <= stocks.size()
         {
             while (current != first_stock() && stocks[current.id()] == std::nullopt)
                 --current;
-            return current;                       //postcondition: 设返回值为next,则stocks[next.id()]为指向current代表的位置或current代表的位置之后的位置上的有效stock的指针的左值,
+            return current;                       //postcondition: 设返回值为next,则stocks[next.id_()]为指向current代表的位置或current代表的位置之后的位置上的有效stock的指针的左值,
         }
     private:
         std::vector<opt_t> stocks;

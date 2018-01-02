@@ -3,6 +3,7 @@
 
 #include "test_serialize.hpp"
 #include "test_graph.hpp"
+#include "test_algorithm.hpp"
 
 namespace test
 {
@@ -10,6 +11,7 @@ namespace test
     {
         serialize::test();
         graph::test();
+        algorithm::test();
     }
 }
 

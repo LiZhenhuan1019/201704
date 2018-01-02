@@ -51,22 +51,19 @@ namespace test
                     auto edge_refs = g.associated_edges(v1);
                     assert(edge_refs.empty());
                 }
-
                 {
                     auto vertices = g.associated_vertices(e0);
                     assert(vertices.first == v0 && vertices.second == v1);
                     std::vector<vertex_id> vertices0 = {vertices.first, vertices.second};
                     std::vector<vertex_id> vertices1;
-                    for (auto v = g.first_vertex(); !g.vertex_end(v); v = g.next_vertex(v))
+                    for (auto v = g.first_vertex(); v != g.end_vertex(); v = g.next_vertex(v))
                         vertices1.push_back(v);
                     assert(vertices0 == vertices1);
                 }
-
                 {
                     std::ostringstream ostream1;
                     ostream1 << g;
                     auto string1 = ostream1.str();
-                    std::cout << string1 << std::endl;
 
                     directed_graph<std::string, std::string> g2;
                     std::istringstream istream(string1);
@@ -75,7 +72,6 @@ namespace test
                     std::ostringstream ostream2;
                     ostream2 << g2;
                     auto string2 = ostream2.str();
-                    std::cout << string2 << std::endl;
 
                     assert(string1 == string2);
                 }
@@ -101,7 +97,6 @@ namespace test
             }
             g.remove_vertex(v0);
             g.remove_vertex(v1);
-
         }
     }
 }

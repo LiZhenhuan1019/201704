@@ -23,7 +23,9 @@ namespace lzhlib
         };
     }
 
-    class null_value_tag;
+    class null_value_tag
+    {
+    };
     namespace detail
     {
         class edge_ref
@@ -103,6 +105,10 @@ namespace lzhlib
         public:
             using vertex_value_t = null_value_tag;
 
+            vertex() = default;
+            vertex(null_value_tag)
+            {}
+
 //            bool is_associated(edge_id i)
 //            {
 //                return edges.find(i)!=edges.end();            //a possibly more efficent way :ask edge for this
@@ -157,10 +163,7 @@ namespace lzhlib
                 {
                     in >> vertex.vertex_value();
                 }
-                std::vector<edge_ref> edge_refs;
-                in >> edge_refs;
-                vertex.edges.clear();
-                std::copy(edge_refs.begin(), edge_refs.end(), std::inserter(vertex.edges, vertex.edges.end()));
+                in >> vertex.edges;
                 return in;
             }
             template <typename ValueT>

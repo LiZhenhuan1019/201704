@@ -11,18 +11,15 @@ namespace ds_expr
     {
         namespace parse
         {
-            namespace detail
+            template <typename T>
+            void assign_value(T &value, std::string const &input)
             {
-                template <typename T>
-                void assign_value(T &value, std::string const &input)
-                {
-                    std::istringstream stream(input);
-                    stream >> value;
-                }
-                void assign_value(std::string &value, std::string const &input)
-                {
-                    value = input;
-                }
+                std::istringstream stream(input);
+                stream >> value;
+            }
+            void assign_value(std::string &value, std::string const &input)
+            {
+                value = input;
             }
 
             template <typename T>
@@ -54,6 +51,7 @@ namespace ds_expr
                     } else
                         return vector_type{};
                 }
+            public:
                 std::optional<value_type> get_value()
                 {
                     if (helper.read(begin_paren))
@@ -71,10 +69,11 @@ namespace ds_expr
                     helper.force_read(close_paren);
                     return value;
                 }
+            private:
                 value_type read_raw_value()
                 {
                     value_type value;
-                    detail::assign_value(value, helper.read_until(close_paren));
+                    assign_value(value, helper.read_until(close_paren));
                     return value;
                 }
                 static constexpr char open_brace = '{', close_brace = '}', separator = ',', begin_paren = '(', close_paren = ')';

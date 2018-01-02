@@ -22,8 +22,10 @@ namespace lzhlib
     class stock_id
     {
     public:
-        stock_id() = default;
-        constexpr stock_id(std::size_t i)   //not private and make repositories as friend class,because there are too many type of repositories.
+        constexpr stock_id()
+            : stock_id(invalid_id)
+        {}
+        constexpr stock_id(std::size_t i)   //not private and make repositories as friend class,because there are too many types of repository.
             : id_(i)
         {}
         constexpr stock_id(detail::invalid_id_t)

@@ -19,6 +19,9 @@ namespace lzhlib
             using edge_value_t = null_value_tag;
             using pair_t = std::pair<vertex_id, vertex_id>;
 
+            edge() = default;
+            edge(null_value_tag)
+            {}
             bool is_associated(vertex_id i) const
             {
                 return i == vertices.first || i == vertices.second;
@@ -52,7 +55,7 @@ namespace lzhlib
                 return in;
             }
             template <typename ValueT>
-            friend std::ostream &operator<<(std::ostream &out, edge<ValueT> const &edge)
+            friend std::ostream &operator<<(std::ostream &out, edge <ValueT> const &edge)
             {
                 using namespace ds_expr::serialize;
                 if constexpr (!std::is_same_v<ValueT, lzhlib::null_value_tag>)

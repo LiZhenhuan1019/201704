@@ -13,7 +13,6 @@ namespace ds_expr
     {
         namespace parse
         {
-
             namespace exception
             {
                 using namespace std::literals;
@@ -126,7 +125,8 @@ namespace ds_expr
                     std::basic_istream<char_type> &in;
                     bool raw_read(char_type c)
                     {
-                        return in.get() == c;
+                        char input = in.get();
+                        return input == c;
                     }
                     bool raw_read(std::basic_string_view<char_type> word)
                     {
@@ -143,6 +143,12 @@ namespace ds_expr
                     void retrieve_pos(Pos pos)
                     {
                         in.seekg(pos);
+                        if (in.eof())
+                            in.clear();
+                        if (in.bad())
+                            in.clear();
+                        if (!in.good())
+                            in.clear();
                     }
                 };
             }

@@ -51,7 +51,6 @@ namespace lzhlib
             base::get_vertex(vertices.first).remove_associated_edge(e);
             base::edge_repository.remove_stock(base::to_stock_id(e));
         }
-
         edge_id get_edge(vertex_id x, vertex_id y) const
         {
             assert(adjacent(x, y));

@@ -47,26 +47,6 @@ namespace ds_expr
             }
             return out << output;
         }
-        template <typename Iter>
-        std::ostream &serialize(std::ostream &out, Iter begin, Iter end)
-        {
-            out << "{";
-            if (begin != end)
-            {
-                auto iter = begin;
-                out << "(";
-                output_with_escape(out, *iter, ')') << ")";
-                for (++iter; iter != end; ++iter)
-                {
-                    out << ",(";
-                    output_with_escape(out, *iter, ')') << ")";
-                }
-            }
-            out << "}";
-            return out;
-        }
-
-
     }
 }
 #endif //INC_201704_BASIC_SERIALIZE_HPP

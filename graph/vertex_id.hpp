@@ -29,6 +29,10 @@ namespace lzhlib
         {
             return id_ == rhs.id_;
         }
+        bool operator!=(vertex_id rhs) const
+        {
+            return !(*this == rhs);
+        }
     private:
         auto id() const noexcept
         {

@@ -49,7 +49,6 @@ namespace test
             test_basic_serialize();
         }
     }
-
 }
 
 #endif //INC_201704_TEST_SERIALIZE_HPP
