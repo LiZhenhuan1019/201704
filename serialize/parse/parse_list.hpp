@@ -16,6 +16,8 @@ namespace ds_expr
             {
                 std::istringstream stream(input);
                 stream >> value;
+                if(!stream)
+                    serialize::exception::throw_exception(stream, __func__);
             }
             void assign_value(std::string &value, std::string const &input)
             {

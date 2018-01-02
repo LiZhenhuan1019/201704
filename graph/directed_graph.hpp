@@ -53,7 +53,6 @@ namespace lzhlib
         }
         edge_id get_edge(vertex_id x, vertex_id y) const
         {
-            assert(adjacent(x, y));
             return base::get_vertex(x).associated_edge(y);
         }
     };

@@ -172,11 +172,16 @@ namespace lzhlib
         };
 
 
+        bool is_id_valid(id_t id) const
+        {
+            return id.id() < stocks.size() && !is_nullopt(id);
+        }
+
         //id_ interface
         stock_t &get_stock(id_t id)
         {
 #ifndef NDEBUG
-            if (is_not_valid(id))
+            if (is_nullopt(id))
             {
                 throw attempt_to_use_unassigned_stock(id);
             }
@@ -186,7 +191,7 @@ namespace lzhlib
         stock_t const &get_stock(id_t id) const
         {
 #ifndef NDEBUG
-            if (is_not_valid(id))
+            if (is_nullopt(id))
             {
                 throw attempt_to_use_unassigned_stock(id);
             }
@@ -208,7 +213,7 @@ namespace lzhlib
         void remove_stock(id_t id)
         {
 #ifndef NDEBUG
-            if (is_not_valid(id))
+            if (is_nullopt(id))
                 throw attempt_to_remove_nonexistent_stock(id);
 #endif // NDEBUG
             stocks[id.id()].reset();
@@ -271,7 +276,7 @@ namespace lzhlib
         }
     private:
 #ifndef NDEBUG
-        bool is_not_valid(id_t id) const
+        bool is_nullopt(id_t id) const
         {
             return stocks[id.id()] == std::nullopt;
         }

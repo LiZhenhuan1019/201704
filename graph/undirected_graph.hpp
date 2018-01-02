@@ -61,7 +61,6 @@ namespace lzhlib
 
         edge_id get_edge(vertex_id x, vertex_id y) const
         {
-            assert(adjacent(x, y));
             if (base::get_vertex(x).associated_edges().size() <
                 base::get_vertex(y).associated_edges().size())
                 return base::get_vertex(x).associated_edge(y);

@@ -79,6 +79,10 @@ namespace lzhlib
             return vertex_id(vertex_repository.next_stock(id.id()));
         }
 
+        bool is_id_valid(vertex_id id) const
+        {
+            return vertex_repository.is_id_valid(id.id());
+        }
     protected:
 
         vertex_t &get_vertex(vertex_id v)
