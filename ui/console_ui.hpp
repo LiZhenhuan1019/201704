@@ -6,6 +6,7 @@
 #include <functional>
 #include <stdexcept>
 #include <map>
+#include <variant>
 #include "../graph/graph.hpp"
 #include "../algorithm/algorithm.hpp"
 
@@ -20,10 +21,11 @@ namespace ds_expr
             using vertex_value_type = Vertex_value_t;
             using edge_value_type = Edge_value_t;
             using vertex_id_type = lzhlib::vertex_id;
-            using directed_graph_type = lzhlib::directed_graph<
-                algorithm::value_wrapper < vertex_value_type>, algorithm::value_wrapper <edge_value_type>>;
-            using undirected_graph_type = lzhlib::undirected_graph<Vertex_value_t, Edge_value_t>;
-            using directed_graphs_type = std::vector<std::optional<directed_graph_type>>;
+            using directed_graph_type = lzhlib::directed_graph<algorithm::value_wrapper<vertex_value_type>, algorithm::value_wrapper<edge_value_type>>;
+            using undirected_graph_type = lzhlib::undirected_graph<algorithm::value_wrapper<vertex_value_type>, algorithm::value_wrapper<edge_value_type>>;
+            using variant_type = std::variant<directed_graph_type , undirected_graph_type>;
+            using optional_type = std::optional<variant_type>;
+            using graphs_type = std::vector<optional_type>;
             struct bad_input : std::runtime_error
             {
                 using std::runtime_error::runtime_error;
@@ -87,7 +89,13 @@ namespace ds_expr
 
             void create()
             {
-                current_graph() = directed_graph_type{};
+                std::cout << "Please select the type of graph.\n"
+                          "0 represents directed graph, 1 represents undirected graph.\n";
+                auto type = input_value(0 ,2);
+                if(type)
+                    current_graph() = undirected_graph_type{};
+                else
+                    current_graph() = directed_graph_type{};
                 std::cout << "Please input the list of vertices value.\n";
                 std::string_view syntax_prompt = "语法：定义以'{'开始，以'}'结束，二者之间为以'('和')'包围元素，以','分隔元素的列表;\n"
                     "列表中每个元素可以是任意字符串，但若其中包含')'这样的字符则需在之前添加'\\'进行转义。\n"
@@ -100,8 +108,12 @@ namespace ds_expr
                 std::istringstream stream(input_line<std::string>());
                 serialize::parse::parse_list<vertex_value_type> parser(stream);
                 auto vertices = parser.extract_list();
-                for (auto &value : vertices)
-                    current_graph()->add_vertex(std::move(value));
+                std::visit(
+                    [&vertices](auto &g)
+                    {
+                        for (auto &value : vertices)
+                            g.add_vertex(std::move(value));
+                    }, *current_graph());
                 print_ok();
             }
 
@@ -116,14 +128,18 @@ namespace ds_expr
             void locate_vertex()
             {
                 std::cout << "Please input the value of vertex to locate.\n";
-                auto value = input_line<vertex_value_type>();
-                for (auto id = current_graph()->first_vertex(); id != current_graph()->end_vertex(); id = current_graph()->next_vertex(id))
-                    if (current_graph()->value(id).value == value)
+                std::visit(
+                    [this](auto &g)
                     {
-                        print_value(id);
-                        return print_ok();
-                    }
-                print_error();
+                        auto value = input_line<vertex_value_type>();
+                        for (auto id = g.first_vertex(); id != g.end_vertex(); id = g.next_vertex(id))
+                        {
+                            if (g.value(id).value == value)
+                                print_value(id);
+                            return print_ok();
+                        }
+                        print_error();
+                    }, *current_graph());
             }
 
             void get_vertex()
@@ -131,7 +147,7 @@ namespace ds_expr
                 std::cout << "Please input the id of vertex to show.\n";
                 auto id = input_line<vertex_id_type>();
                 check_exists(id, __func__);
-                auto &value = current_graph()->value(id).value;
+                auto &value = std::visit([&id](auto &g)->auto&{return g.value(id).value;}, *current_graph());
                 std::cout << "The vertex ";
                 print_value(value);
                 print_ok();
@@ -144,7 +160,7 @@ namespace ds_expr
                 check_exists(id, __func__);
                 std::cout << "Please input the value to change to.\n";
                 auto value = input_line<vertex_value_type>();
-                current_graph()->value(id).value = value;
+                std::visit([&id, &value](auto &g){g.value(id).value = value;}, *current_graph());
                 print_ok();
             }
 
@@ -153,7 +169,7 @@ namespace ds_expr
                 std::cout << "Please input the id of the vertex.\n";
                 auto id = input_line<vertex_id_type>();
                 check_exists(id, __func__);
-                auto const &edges = current_graph()->associated_edges(id);
+                auto const &edges = std::visit([&id](auto &g)->auto&{return g.associated_edges(id);}, *current_graph());
                 if (edges.empty())
                     return print_null();
                 print_value(edges.begin()->opposite_vertex());
@@ -165,7 +181,7 @@ namespace ds_expr
                 std::cout << "Please input the id of the vertex.\n";
                 auto id = input_line<vertex_id_type>();
                 check_exists(id, __func__);
-                auto const &edges = current_graph()->associated_edges(id);
+                auto const &edges = std::visit([&id](auto &g)->auto&{return g.associated_edges(id);}, *current_graph());
                 if (edges.empty())
                     return print_null();
                 std::cout << "Please input the id of the previous adjacent\n";
@@ -186,7 +202,7 @@ namespace ds_expr
             {
                 std::cout << "Please input the value of the vertex.\n";
                 auto value = input_line<vertex_value_type>();
-                current_graph()->add_vertex(algorithm::value_wrapper{value});
+                std::visit([&value](auto &g){g.add_vertex(algorithm::value_wrapper{std::move(value)});}, *current_graph());
                 print_ok();
             }
 
@@ -195,7 +211,7 @@ namespace ds_expr
                 std::cout << "Please input the id of the vertex to delete.\n";
                 auto id = input_line<vertex_id_type>();
                 check_exists(id, __func__);
-                current_graph()->remove_vertex(id);
+                std::visit([&id](auto &g){g.remove_vertex(id);}, *current_graph());
                 print_ok();
             }
 
@@ -207,13 +223,17 @@ namespace ds_expr
                 std::cout << "Please input the id of the second vertex.\n";
                 auto second = input_line<vertex_id_type>();
                 check_exists(second, __func__);
-                auto edge = current_graph()->get_edge(first, second);
-                print_value(current_graph()->value(edge).value);
+                std::visit([this, &first, &second](auto &g)
+                           {
+                               auto edge = g.get_edge(first, second);
+                               print_value(g.value(edge).value);
+                           }, *current_graph());
                 print_ok();
             }
 
             void add_edge()
             {
+                std::cout << "Existing edge will be replaced by new edge.\n";
                 std::cout << "Please input the id of the first vertex.\n";
                 auto first = input_line<vertex_id_type>();
                 check_exists(first, __func__);
@@ -222,7 +242,10 @@ namespace ds_expr
                 check_exists(second, __func__);
                 std::cout << "Please input the value of the edge.\n";
                 auto value = input_line<edge_value_type>();
-                current_graph()->add_edge(first, second, algorithm::value_wrapper{value});
+                std::visit([&first, &second, &value](auto &g)
+                           {
+                               g.add_edge(first, second, algorithm::value_wrapper{std::move(value)});
+                           }, *current_graph());
                 print_ok();
             }
 
@@ -234,21 +257,34 @@ namespace ds_expr
                 std::cout << "Please input the id of the second vertex.\n";
                 auto second = input_line<vertex_id_type>();
                 check_exists(second, __func__);
-                current_graph()->remove_edge(first, second);
+                std::visit([&first, &second](auto &g)
+                           {
+                               g.remove_edge(first, second);
+                           }, *current_graph());
                 print_ok();
             }
 
             void dfs_iterate()
             {
-                algorithm::depth_first_search(current_graph().value(), [](auto const &value)
-                { std::cout << "Visit vertex '" + value + "'.\n"; });
+                std::visit([](auto &g)
+                           {
+                               algorithm::depth_first_search(g, [](auto const &value)
+                               {
+                                   std::cout << " Visit vertex'" + value + "'.\n";
+                               });
+                           }, *current_graph());
                 print_ok();
             }
 
             void bfs_iterate()
             {
-                algorithm::breadth_first_search(current_graph().value(), [](auto const &value)
-                { std::cout << "Visit vertex '" + value + "'.\n"; });
+                std::visit([](auto &g)
+                           {
+                               algorithm::breadth_first_search(g, [](auto const &value)
+                               {
+                                   std::cout << " Visit vertex'" + value + "'.\n";
+                               });
+                           }, *current_graph());
                 print_ok();
             }
 
@@ -455,7 +491,7 @@ namespace ds_expr
 
             bool quit = false;
             std::size_t current_graph_index = 0;
-            directed_graphs_type directed_graphs;
+            graphs_type directed_graphs;
 
             inline static auto commands = make_commands(std::pair{&console_ui::exit, "Exit"},
                                                         std::pair{&console_ui::create, "Create"},
@@ -484,7 +520,10 @@ namespace ds_expr
             }
             bool vertex_exists(vertex_id_type id)
             {
-                return current_graph()->is_id_valid(id);
+                return std::visit([&id](auto &g)
+                                  {
+                                      return g.is_id_valid(id);
+                                  }, *current_graph());
             }
             void check_exists(vertex_id_type id, char const *function_name)
             {

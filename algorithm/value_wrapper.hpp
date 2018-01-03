@@ -38,15 +38,9 @@ namespace ds_expr
         };
 
         template <typename T, typename Number_t = int>
-        value_wrapper(T
-        &&t,
-        Number_t = 0
-        ) ->
-        value_wrapper<detail::remove_cvrf_t<T>, Number_t>;
+        value_wrapper(T&&t, Number_t = 0) -> value_wrapper<detail::remove_cvrf_t<T>, Number_t>;
         template <typename Char_t, size_t N, typename Number_t = int>
-        value_wrapper(Char_t( &)[N], Number_t = 0
-        ) ->
-        value_wrapper<std::basic_string<std::remove_const_t<Char_t>>, Number_t>;
+        value_wrapper(Char_t( &)[N], Number_t = 0) -> value_wrapper<std::basic_string<std::remove_const_t<Char_t>>, Number_t>;
     }
 }
 
