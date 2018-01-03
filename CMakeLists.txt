@@ -3,6 +3,8 @@ project(201704)
 
 set(CMAKE_CXX_STANDARD 17)
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fexec-charset=GBK")
+
 add_executable(201704
         main.cpp
         graph/directed_graph.hpp

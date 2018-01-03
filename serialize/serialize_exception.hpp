@@ -44,9 +44,8 @@ namespace ds_expr
                     throw stream_eof(function_name);
                 else if(in.bad())
                     throw stream_bad(function_name);
-                else if(in.fail())
+                else
                     throw stream_fail(function_name);
-                assert(0);
             }
         }
     }
