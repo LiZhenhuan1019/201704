@@ -2,7 +2,7 @@
 #define GRAPH_VERTEX_ID_H
 
 #include <cstddef>    //for std::size_t
-#include "repository/stock_id.h"
+#include "../repository/stock_id.hpp"
 
 namespace lzhlib
 {
