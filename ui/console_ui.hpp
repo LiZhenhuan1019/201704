@@ -23,7 +23,7 @@ namespace ds_expr
             using vertex_id_type = lzhlib::vertex_id;
             using directed_graph_type = lzhlib::directed_graph<algorithm::value_wrapper<vertex_value_type>, algorithm::value_wrapper<edge_value_type>>;
             using undirected_graph_type = lzhlib::undirected_graph<algorithm::value_wrapper<vertex_value_type>, algorithm::value_wrapper<edge_value_type>>;
-            using variant_type = std::variant<directed_graph_type , undirected_graph_type>;
+            using variant_type = std::variant<directed_graph_type , undirected_graph_type>; //use std::variant to support both directed and undirected graph
             using optional_type = std::optional<variant_type>;
             using graphs_type = std::vector<optional_type>;
             struct bad_input : std::runtime_error
@@ -99,7 +99,7 @@ namespace ds_expr
                 std::cout << "Please input the list of vertices value.\n";
                 std::string_view syntax_prompt = "语法：定义以'{'开始，以'}'结束，二者之间为以'('和')'包围元素，以','分隔元素的列表;\n"
                     "列表中每个元素可以是任意字符串，但若其中包含')'这样的字符则需在之前添加'\\'进行转义。\n"
-                    "列表中每一个元素将成为对应结点的值，对应结点的id为元素在列表中位置(从0开始)。\n"
+                    "列表中每一个元素将成为对应结点的值，元素在列表中的位置将成为对应结点的id（从0起始）。\n"
                     "空格可在任意地方添加，但元素中的空格将被视为元素的一部分。\n"
                     "例子： {(first vertex), ( with spaces ) , (without_space)}\n"
                     R"~(将得到一个含有3个顶点的图，其中id为0的顶点的值为"first vertex"，)~""\n"
