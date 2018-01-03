@@ -20,7 +20,8 @@ namespace ds_expr
             using vertex_value_type = Vertex_value_t;
             using edge_value_type = Edge_value_t;
             using vertex_id_type = lzhlib::vertex_id;
-            using directed_graph_type = lzhlib::directed_graph<algorithm::value_wrapper < vertex_value_type>, algorithm::value_wrapper <edge_value_type>>;
+            using directed_graph_type = lzhlib::directed_graph<
+                algorithm::value_wrapper < vertex_value_type>, algorithm::value_wrapper <edge_value_type>>;
             using undirected_graph_type = lzhlib::undirected_graph<Vertex_value_t, Edge_value_t>;
             using directed_graphs_type = std::vector<std::optional<directed_graph_type>>;
             struct bad_input : std::runtime_error
@@ -92,7 +93,9 @@ namespace ds_expr
                     "列表中每个元素可以是任意字符串，但若其中包含')'这样的字符则需在之前添加'\\'进行转义。\n"
                     "列表中每一个元素将成为对应结点的值，对应结点的id为元素在列表中位置(从0开始)。\n"
                     "空格可在任意地方添加，但元素中的空格将被视为元素的一部分。\n"
-                    "例子： {(first vertex), ( with spaces ) , (without_space)}\n";
+                    "例子： {(first vertex), ( with spaces ) , (without_space)}\n"
+                    R"~(将得到一个含有3个顶点的图，其中id为0的顶点的值为"first vertex"，)~""\n"
+                    R"~(    id为1的顶点的值为" with spaces "，id为2的顶点的值为"without_space"。)~""\n";
                 std::cout << syntax_prompt;
                 std::istringstream stream(input_line<std::string>());
                 serialize::parse::parse_list<vertex_value_type> parser(stream);
@@ -276,7 +279,7 @@ namespace ds_expr
                 auto index = input_index();
                 if (index > directed_graphs.size())
                     return print_error();
-                if(current_graph_index >= index)
+                if (current_graph_index >= index)
                     ++current_graph_index;
                 directed_graphs.insert(std::next(directed_graphs.begin(), index), directed_graph_type{});
                 print_ok();
@@ -343,7 +346,7 @@ namespace ds_expr
             template <typename U>
             static auto input_line(std::istream &in = std::cin)
             {
-                while(true)
+                while (true)
                 {
                     try
                     {
@@ -353,7 +356,7 @@ namespace ds_expr
                         serialize::parse::assign_value(u, str);
                         return u;
                     }
-                    catch (serialize::exception::stream_fail const&e)
+                    catch (serialize::exception::stream_fail const &e)
                     {
                         std::cout << "Please input a valid value!\n";
                         std::cin.clear();
@@ -393,7 +396,8 @@ namespace ds_expr
                 while (input < lower_bound || input >= upper_bound)
                 {
                     std::cout << "The value is out of range, please input again.\n";
-                    std::cout << "The value should be in the range of [" << lower_bound << ", " << upper_bound << ").\n";
+                    std::cout << "The value should be in the range of [" << lower_bound << ", " << upper_bound
+                              << ").\n";
                     input = input_value<U>();
                 }
                 return input;
