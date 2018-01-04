@@ -10,6 +10,12 @@
 #include "../graph/graph.hpp"
 #include "../algorithm/algorithm.hpp"
 
+#ifdef _WIN32
+    constexpr char clear_screen_command[] = "cls";
+#elif defined(__unix__)
+    constexpr char clear_screen_command[] = "clear";
+#endif
+
 namespace ds_expr
 {
     namespace ui
@@ -541,7 +547,7 @@ namespace ds_expr
 
             static void clear_screen()
             {
-                std::cout << "\x1B[2J\x1B[H";
+                std::system(clear_screen_command);
             }
 
             friend std::ostream &operator<<(std::ostream &out, console_ui const &ui)
