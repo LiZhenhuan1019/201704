@@ -9,6 +9,40 @@ namespace ds_expr
 {
     namespace serialize
     {
+        template <typename T1, typename T2>
+        std::istream &operator>>(std::istream &in, std::variant<T1, T2> &variant)
+        {
+            std::size_t index = 0;
+            in >> index;
+            switch (index)
+            {
+                case 0:
+                {
+                    T1 t;
+                    in >> t;
+                    variant = t;
+                    break;
+                }
+                case 1:
+                {
+                    T2 t;
+                    in >> t;
+                    variant = t;
+                    break;
+                }
+            }
+            return in;
+        }
+        template <typename T1, typename T2>
+        std::ostream &operator<<(std::ostream &out, std::variant<T1, T2> const &variant)
+        {
+            out << variant.index() << " ";
+            std::visit([&out](auto &t)
+                       {
+                           out << t;
+                       }, variant);
+            return out;
+        }
         template <typename T>
         std::istream &operator>>(std::istream &in, std::optional<T> &optional)
         {
@@ -31,38 +65,6 @@ namespace ds_expr
                 out << 1 << " " << *optional;
             } else
                 out << 0 << " ";
-            return out;
-        }
-        template <typename T1, typename T2>
-        std::istream &operator>>(std::istream &in, std::variant<T1, T2> &variant)
-        {
-            std::size_t index = 0;
-            in >> index;
-            switch (index)
-            {
-            case 0:
-            {
-                T1 t;
-                in >> t;
-                variant = t;
-                break;
-            }
-            case 1:
-                T2 t;
-                in >> t;
-                variant = t;
-                break;
-            }
-            return in;
-        }
-        template <typename T1, typename T2>
-        std::ostream &operator<<(std::ostream &out, std::variant<T1, T2> const &variant)
-        {
-            out << variant.index() << " ";
-            std::visit([&out](auto &t)
-                       {
-                           out << t;
-                       }, variant);
             return out;
         }
         template <typename T, typename ...Escaped>

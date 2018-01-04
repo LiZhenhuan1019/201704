@@ -3,7 +3,11 @@ project(201704)
 
 set(CMAKE_CXX_STANDARD 17)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static -fexec-charset=GBK")
+if (CMAKE_CXX_COMPILER MATCHES .*clang\\+\\+.*)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++ ")
+else ()
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static -fexec-charset=GBK")
+endif ()
 
 add_executable(201704
         main.cpp

@@ -493,26 +493,26 @@ namespace ds_expr
             std::size_t current_graph_index = 0;
             graphs_type directed_graphs;
 
-            inline static auto commands = make_commands(std::pair{&console_ui::exit, "Exit"},
-                                                        std::pair{&console_ui::create, "Create"},
-                                                        std::pair{&console_ui::destroy, "Destroy"},
-                                                        std::pair{&console_ui::locate_vertex, "Locate"},
-                                                        std::pair{&console_ui::get_vertex, "GetVertex"},
-                                                        std::pair{&console_ui::assign_vertex, "AssignVertex"},
-                                                        std::pair{&console_ui::first_adjacent, "FirstAdjVex"},
-                                                        std::pair{&console_ui::next_adjacent, "NextAdjVex"},
-                                                        std::pair{&console_ui::add_vertex, "AddVertex"},
-                                                        std::pair{&console_ui::remove_vertex, "RemoveVertex"},
-                                                        std::pair{&console_ui::get_edge, "GetEdge"},
-                                                        std::pair{&console_ui::add_edge, "AddEdge"},
-                                                        std::pair{&console_ui::remove_edge, "RemoveEdge"},
-                                                        std::pair{&console_ui::dfs_iterate, "DfsIterate"},
-                                                        std::pair{&console_ui::bfs_iterate, "BfsIterate"},
-                                                        std::pair{&console_ui::save, "Save"},
-                                                        std::pair{&console_ui::load, "Load"},
-                                                        std::pair{&console_ui::add_graph, "AddGraph"},
-                                                        std::pair{&console_ui::select_graph, "SelectGraph"},
-                                                        std::pair{&console_ui::remove_graph, "RemoveGraph"}
+            inline static auto commands = make_commands(std::make_pair(&console_ui::exit, "Exit"),
+                                                        std::make_pair(&console_ui::create, "Create"),
+                                                        std::make_pair(&console_ui::destroy, "Destroy"),
+                                                        std::make_pair(&console_ui::locate_vertex, "Locate"),
+                                                        std::make_pair(&console_ui::get_vertex, "GetVertex"),
+                                                        std::make_pair(&console_ui::assign_vertex, "AssignVertex"),
+                                                        std::make_pair(&console_ui::first_adjacent, "FirstAdjVex"),
+                                                        std::make_pair(&console_ui::next_adjacent, "NextAdjVex"),
+                                                        std::make_pair(&console_ui::add_vertex, "AddVertex"),
+                                                        std::make_pair(&console_ui::remove_vertex, "RemoveVertex"),
+                                                        std::make_pair(&console_ui::get_edge, "GetEdge"),
+                                                        std::make_pair(&console_ui::add_edge, "AddEdge"),
+                                                        std::make_pair(&console_ui::remove_edge, "RemoveEdge"),
+                                                        std::make_pair(&console_ui::dfs_iterate, "DfsIterate"),
+                                                        std::make_pair(&console_ui::bfs_iterate, "BfsIterate"),
+                                                        std::make_pair(&console_ui::save, "Save"),
+                                                        std::make_pair(&console_ui::load, "Load"),
+                                                        std::make_pair(&console_ui::add_graph, "AddGraph"),
+                                                        std::make_pair(&console_ui::select_graph, "SelectGraph"),
+                                                        std::make_pair(&console_ui::remove_graph, "RemoveGraph")
             );
             auto &current_graph()
             {
