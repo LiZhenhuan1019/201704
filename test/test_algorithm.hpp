@@ -2,6 +2,7 @@
 #define INC_201704_TEST_ALGORITHM_HPP
 #include "../graph/graph.hpp"
 #include "../algorithm/algorithm.hpp"
+#include "../algorithm/value_wrapper.hpp"
 
 namespace test
 {

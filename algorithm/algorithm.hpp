@@ -2,7 +2,6 @@
 #define INC_201704_ALGORITHM_HPP
 
 #include <queue>
-#include "value_wrapper.hpp"
 namespace ds_expr
 {
     namespace algorithm

@@ -11,6 +11,7 @@
 #include "../graph/graph.hpp"
 #include "../serialize/serialize.hpp"
 #include "../algorithm/algorithm.hpp"
+#include "../algorithm/value_wrapper.hpp"
 
 #ifdef _WIN32
     constexpr char clear_screen_command[] = "cls";
