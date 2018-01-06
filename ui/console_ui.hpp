@@ -7,7 +7,9 @@
 #include <stdexcept>
 #include <map>
 #include <variant>
+#include <cassert>
 #include "../graph/graph.hpp"
+#include "../serialize/serialize.hpp"
 #include "../algorithm/algorithm.hpp"
 
 #ifdef _WIN32
