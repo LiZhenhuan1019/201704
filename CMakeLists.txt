@@ -4,8 +4,10 @@ project(201704)
 set(CMAKE_CXX_STANDARD 17)
 
 if (CMAKE_CXX_COMPILER MATCHES .*clang\\+\\+.*)
+    # use libc++ when using clang because clang has some problem with std::visit of libstdc++.
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++ ")
 else ()
+    # use gcc to generate executable required by teacher. So use static linking and GBK encoding to make it runnable on Windows.
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static -fexec-charset=GBK")
 endif ()
 
